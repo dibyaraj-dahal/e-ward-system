@@ -1,9 +1,9 @@
-function FatherInfo({ formData, handleChange }) {
+function MotherInfo({ formData, handleChange }) {
   return (
     <div className="bg-white p-6 rounded-xl shadow-md mt-6">
 
-      <h2 className="text-2xl font-semibold text-blue-700 mb-6">
-        Father Information
+      <h2 className="text-2xl font-semibold text-pink-700 mb-6">
+        Mother Information
       </h2>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -12,8 +12,8 @@ function FatherInfo({ formData, handleChange }) {
           <label>First Name</label>
           <input
             type="text"
-            name="fatherFirstName"
-            value={formData.fatherFirstName}
+            name="motherFirstName"
+            value={formData.motherFirstName}
             onChange={handleChange}
             className="w-full border rounded-lg p-3"
           />
@@ -23,8 +23,8 @@ function FatherInfo({ formData, handleChange }) {
           <label>Middle Name</label>
           <input
             type="text"
-            name="fatherMiddleName"
-            value={formData.fatherMiddleName}
+            name="motherMiddleName"
+            value={formData.motherMiddleName}
             onChange={handleChange}
             className="w-full border rounded-lg p-3"
           />
@@ -34,8 +34,8 @@ function FatherInfo({ formData, handleChange }) {
           <label>Last Name</label>
           <input
             type="text"
-            name="fatherLastName"
-            value={formData.fatherLastName}
+            name="motherLastName"
+            value={formData.motherLastName}
             onChange={handleChange}
             className="w-full border rounded-lg p-3"
           />
@@ -45,8 +45,8 @@ function FatherInfo({ formData, handleChange }) {
           <label>Occupation</label>
           <input
             type="text"
-            name="fatherOccupation"
-            value={formData.fatherOccupation}
+            name="motherOccupation"
+            value={formData.motherOccupation}
             onChange={handleChange}
             className="w-full border rounded-lg p-3"
           />
@@ -56,8 +56,8 @@ function FatherInfo({ formData, handleChange }) {
           <label>Nationality</label>
           <input
             type="text"
-            name="fatherNationality"
-            value={formData.fatherNationality}
+            name="motherNationality"
+            value={formData.motherNationality}
             onChange={handleChange}
             className="w-full border rounded-lg p-3"
           />
@@ -67,8 +67,8 @@ function FatherInfo({ formData, handleChange }) {
           <label>Phone Number</label>
           <input
             type="tel"
-            name="fatherPhone"
-            value={formData.fatherPhone}
+            name="motherPhone"
+            value={formData.motherPhone}
             onChange={handleChange}
             className="w-full border rounded-lg p-3"
           />
@@ -80,8 +80,8 @@ function FatherInfo({ formData, handleChange }) {
         <label>Address</label>
         <input
           type="text"
-          name="fatherAddress"
-          value={formData.fatherAddress}
+          name="motherAddress"
+          value={formData.motherAddress}
           onChange={handleChange}
           className="w-full border rounded-lg p-3"
         />
@@ -90,8 +90,8 @@ function FatherInfo({ formData, handleChange }) {
   <label>Citizenship Number</label>
   <input
     type="text"
-    name="fatherCitizenshipNo"
-    value={formData.fatherCitizenshipNo}
+    name="motherCitizenshipNo"
+    value={formData.motherCitizenshipNo}
     onChange={handleChange}
     className="w-full border rounded-lg p-3"
   />
@@ -101,4 +101,4 @@ function FatherInfo({ formData, handleChange }) {
   );
 }
 
-export default FatherInfo;
+export default MotherInfo;

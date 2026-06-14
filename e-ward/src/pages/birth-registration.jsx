@@ -2,6 +2,9 @@ import { useState } from "react";
 import ChildInfo from "../components/ChildInfo";
 import logo from "../assets/nepal-sarkar.png";
 import FatherInfo from "../components/FatherInfo";
+import MotherInfo from "../components/MotherInfo";
+import AddressInfo from "../components/AddressInfo";
+import InformantInfo from "../components/InformantInfo";
 
 function BirthRegistration() {
   const [formData, setFormData] = useState({
@@ -20,12 +23,33 @@ function BirthRegistration() {
     fatherNationality: "",
     fatherPhone: "",
     fatherAddress: "",
+    fatherCitizenshipNo: "",
+    // Mother info
+motherFirstName: "",
+motherMiddleName: "",
+motherLastName: "",
+motherOccupation: "",
+motherNationality: "",
+motherPhone: "",
+motherAddress: "",
+motherCitizenshipNo: "",
+// Address Information
+province: "",
+district: "",
+municipality: "",
+wardNo: "",
+tole: "",
+// Informant Information
+informantName: "",
+relationship: "",
+informantPhone: "",
+informantCitizenship: "",
   });
 
   function handleChange(event) {
     const { name, value } = event.target;
-    setFormData((prev) => ({
-      ...prev,
+    setFormData(p => ({
+      ...p,
       [name]: value,
     }));
   }
@@ -60,7 +84,18 @@ function BirthRegistration() {
   formData={formData}
   handleChange={handleChange}
 />
-
+<MotherInfo
+  formData={formData}
+  handleChange={handleChange}
+/>
+<AddressInfo
+  formData={formData}
+  handleChange={handleChange}
+/>
+<InformantInfo
+  formData={formData}
+  handleChange={handleChange}
+/>
       </div>
     </div>
   );
