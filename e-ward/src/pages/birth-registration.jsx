@@ -1,6 +1,7 @@
 import { useState } from "react";
 import ChildInfo from "../components/ChildInfo";
 import logo from "../assets/nepal-sarkar.png";
+import FatherInfo from "../components/FatherInfo";
 
 function BirthRegistration() {
   const [formData, setFormData] = useState({
@@ -11,6 +12,14 @@ function BirthRegistration() {
     dob: "",
     birthType: "",
     birthPlace: "",
+    // Father info
+    fatherFirstName: "",
+    fatherMiddleName: "",
+    fatherLastName: "",
+    fatherOccupation: "",
+    fatherNationality: "",
+    fatherPhone: "",
+    fatherAddress: "",
   });
 
   function handleChange(event) {
@@ -46,6 +55,11 @@ function BirthRegistration() {
           formData={formData}
           handleChange={handleChange}
         />
+
+<FatherInfo
+  formData={formData}
+  handleChange={handleChange}
+/>
 
       </div>
     </div>

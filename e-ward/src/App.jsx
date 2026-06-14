@@ -1,9 +1,7 @@
-import BirthRegistration from "./pages/birth-registration";
+import BirthRegistration from "./pages/birth-registration.jsx";
 
 function App() {
-  return (
-    <BirthRegistration />
-  );
+  return <BirthRegistration />;
 }
 
 export default App;
