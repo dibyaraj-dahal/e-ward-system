@@ -141,7 +141,7 @@ function BirthRegistration() {
             </button>
             <button
               type="submit"
-              className="bg-slate-200 hover:bg-slate-300 px-6 py-2 rounded-md cursor-pointer transition-colors"
+              className="bg-blue-300 hover:bg-slate-300 px-6 py-2 rounded-md cursor-pointer transition-colors"
             >
               Submit
             </button>
