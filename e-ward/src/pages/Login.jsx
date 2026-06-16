@@ -76,11 +76,23 @@ function Login() {
   };
 
   return (
-    <div className="min-h-screen w-full flex  flex-col gap-6 justify-center items-center bg-gray-100 ">
-      <div className="flex  flex-col gap-6 justify-center items-center bg-gray-100 ">
-        <div className="w-full flex justify-center items-center">
-          <h1 className="text-2xl font-bold">Login</h1>
-        </div>
+    
+    
+  <div className="flex flex-col items-center gap-3">
+  <img
+    src="/logo.png"
+    alt="Logo"
+    className="w-20 h-20 object-contain"
+  />
+
+  <h1 className="text-3xl font-bold text-blue-700">
+    E-Ward System
+  </h1>
+
+  <p className="text-gray-500 text-sm">
+    Login with your phone number
+  </p>
+
         <div className="w-full  ">
           <label htmlFor="" className="text-md font-bold ">
             Phone Number:
@@ -137,7 +149,8 @@ function Login() {
           </button>
         </div>
       </div>
-    </div>
+    
+    
   );
 }
 
