@@ -84,7 +84,7 @@ function BirthRegistration() {
       ) : (
         <form
           required
-          className="min-h-screen bg-gray-100 p-8 flex flex-col max-w-6xl mx-auto gap-4"
+          className="min-h-screen bg-gray-100 p-8 flex flex-col max-w-6xl mx-auto gap-4 "
           onSubmit={handleSubmit}
         >
           <div>
