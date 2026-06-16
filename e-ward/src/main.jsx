@@ -9,7 +9,7 @@ import Register from "./pages/Register.jsx";
 import Preview from "./components/Preview.jsx";
 import Dashboard from "./pages/admin/Dashboard.jsx";
 import Users from "./pages/admin/Users.jsx";
-
+import UserForm from "./components/admin/userform.jsx";
 
 const router = createBrowserRouter([
   {
@@ -37,6 +37,10 @@ const router = createBrowserRouter([
     path: "/admin/users",
     element: <Users />,
   },
+  {
+  path: "/admin/userform",
+  element: <UserForm />,
+},
  
 
 ]);
