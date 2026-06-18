@@ -2,6 +2,23 @@ function MotherInfo({ setFormData, formData, handleChange }) {
   const inputStyle =
     "w-full border border-gray-300 rounded-lg p-3 outline-none transition-colors focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:invalid:border-blue-500 focus:invalid:ring-blue-500";
 
+  const motherIndex = formData.parents.findIndex(
+    (p) => p.parent_type === "MOTHER",
+  );
+  const mother = formData.parents[motherIndex];
+
+  const handleMotherChange = (e) => {
+    e.preventDefault();
+    setFormData((prev) => {
+      const updatedParents = [...prev.parents];
+      updatedParents[motherIndex] = {
+        ...updatedParents[motherIndex],
+        [e.target.name]: e.target.value,
+      };
+      return { ...prev, parents: updatedParents };
+    });
+  };
+
   return (
     <div className="bg-white p-6 rounded-xl shadow-md mt-6">
       <h2 className="text-2xl font-semibold text-pink-700 mb-6">
@@ -13,14 +30,9 @@ function MotherInfo({ setFormData, formData, handleChange }) {
           <label>पहिलो नाम (First Name)</label>
           <input
             type="text"
-            name="mother_first_name"
-            value={formData.mother_first_name}
-            onChange={(e) => {
-              setFormData((prev) => ({
-                ...prev,
-                [e.target.name]: e.target.value,
-              }));
-            }}
+            name="parent_first_name"
+            value={mother.parent_first_name}
+            onChange={handleMotherChange}
             placeholder="पहिलो नाम लेख्नुहोस् (Enter First Name)"
             required
             className={inputStyle}
@@ -33,14 +45,9 @@ function MotherInfo({ setFormData, formData, handleChange }) {
           </label>
           <input
             type="text"
-            name="mother_middle_name"
-            value={formData.mother_middle_name}
-            onChange={(e) => {
-              setFormData((prev) => ({
-                ...prev,
-                [e.target.name]: e.target.value,
-              }));
-            }}
+            name="parent_middle_name"
+            value={mother.parent_middle_name}
+            onChange={handleMotherChange}
             placeholder="बीचको नाम (Middle Name)"
             className={inputStyle}
           />
@@ -50,14 +57,9 @@ function MotherInfo({ setFormData, formData, handleChange }) {
           <label>थर (Last Name)</label>
           <input
             type="text"
-            name="mother_last_name"
-            value={formData.mother_last_name}
-            onChange={(e) => {
-              setFormData((prev) => ({
-                ...prev,
-                [e.target.name]: e.target.value,
-              }));
-            }}
+            name="parent_last_name"
+            value={mother.parent_last_name}
+            onChange={handleMotherChange}
             placeholder="थर लेख्नुहोस् (Enter Last Name)"
             className={inputStyle}
           />
@@ -67,14 +69,9 @@ function MotherInfo({ setFormData, formData, handleChange }) {
           <label>पेशा (Occupation)</label>
           <input
             type="text"
-            name="mother_occupation"
-            value={formData.mother_occupation}
-            onChange={(e) => {
-              setFormData((prev) => ({
-                ...prev,
-                [e.target.name]: e.target.value,
-              }));
-            }}
+            name="parent_occupation"
+            value={mother.parent_occupation}
+            onChange={handleMotherChange}
             placeholder="पेशा लेख्नुहोस् (Enter Occupation)"
             required
             className={inputStyle}
@@ -85,14 +82,9 @@ function MotherInfo({ setFormData, formData, handleChange }) {
           <label>राष्ट्रियता (Nationality)</label>
           <input
             type="text"
-            name="mother_nationality"
-            value={formData.mother_nationality}
-            onChange={(e) => {
-              setFormData((prev) => ({
-                ...prev,
-                [e.target.name]: e.target.value,
-              }));
-            }}
+            name="parent_nationality"
+            value={mother.parent_nationality}
+            onChange={handleMotherChange}
             placeholder="राष्ट्रियता लेख्नुहोस् (Enter Nationality)"
             required
             className={inputStyle}
@@ -103,15 +95,19 @@ function MotherInfo({ setFormData, formData, handleChange }) {
           <label>फोन नम्बर (Phone Number)</label>
           <input
             type="tel"
-            name="mother_contact_no"
-            value={formData.mother_contact_no}
+            name="parent_contact_no"
+            value={mother.parent_contact_no}
             onChange={(e) => {
               if (e.target.value === undefined || isNaN(Number(e.target.value)))
                 return;
-              setFormData((prev) => ({
-                ...prev,
-                [e.target.name]: Number(e.target.value).toString(),
-              }));
+              setFormData((prev) => {
+                const updatedParents = [...prev.parents];
+                updatedParents[motherIndex] = {
+                  ...updatedParents[motherIndex],
+                  parent_contact_no: Number(e.target.value).toString(),
+                };
+                return { ...prev, parents: updatedParents };
+              });
             }}
             required
             placeholder="98XXXXXXXX"
@@ -124,15 +120,19 @@ function MotherInfo({ setFormData, formData, handleChange }) {
         <label>नागरिकता नम्बर (Citizenship Number)</label>
         <input
           type="text"
-          name="mother_citizenship_no"
-          value={formData.mother_citizenship_no}
+          name="parent_citizenship_no"
+          value={mother.parent_citizenship_no}
           onChange={(e) => {
             if (e.target.value === undefined || isNaN(Number(e.target.value)))
               return;
-            setFormData((prev) => ({
-              ...prev,
-              [e.target.name]: e.target.value,
-            }));
+            setFormData((prev) => {
+              const updatedParents = [...prev.parents];
+              updatedParents[motherIndex] = {
+                ...updatedParents[motherIndex],
+                parent_citizenship_no: e.target.value,
+              };
+              return { ...prev, parents: updatedParents };
+            });
           }}
           placeholder="नागरिकता नम्बर लेख्नुहोस् (Enter Citizenship Number)"
           required

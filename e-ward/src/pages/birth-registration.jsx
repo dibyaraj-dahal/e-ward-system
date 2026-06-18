@@ -7,46 +7,67 @@ import AddressInfo from "../components/birthregistration-component/AddressInfo";
 import InformantInfo from "../components/birthregistration-component/InformantInfo";
 import Preview from "../components/Preview";
 import { birthRegistrationSchema } from "../validation/birth-certificate-validation";
+import API_URL from "../api/api";
 
 function BirthRegistration() {
   const [showPreview, setShowPreview] = useState(false);
   const [formData, setFormData] = useState({
-    child_first_name: "",
-    child_middle_name: "",
-    child_last_name: "",
-    child_gender: "",
-    child_dob_bs: "",
-    child_time_of_birth: "",
-    child_birth_kind: "",
-    child_birth_place: "",
-    child_weight_kg: "",
-    father_first_name: "",
-    father_middle_name: "",
-    father_last_name: "",
-    father_occupation: "",
-    father_nationality: "",
-    father_contact_no: "",
-    father_citizenship_no: "",
-    mother_first_name: "",
-    mother_middle_name: "",
-    mother_last_name: "",
-    mother_occupation: "",
-    mother_nationality: "",
-    mother_contact_no: "",
-    mother_citizenship_no: "",
-    child_province: "",
-    child_district: "",
-    child_municipality: "",
-    child_ward_number: "",
-    child_tole: "",
-    nominee_first_name: "",
-    nominee_middle_name: "",
-    nominee_last_name: "",
-    nominee_citizenship_no: "",
-    nominee_contact_no: "",
-    nominee_witness_order: "1",
-    nominee_relationship: "",
-    nominee_address: "",
+    register_ward_id: "132a7e78-9d6b-4e0a-a81b-5ec99fe43f9c",
+    register_submitted_by: 1,
+    child: {
+      child_first_name: "",
+      child_middle_name: "",
+      child_last_name: "",
+      child_gender: "",
+      child_dob_bs: "",
+      child_time_of_birth: "",
+      child_birth_place: "",
+      child_birth_kind: "",
+      child_weight_kg: 0,
+    },
+    parents: [
+      {
+        parent_first_name: "",
+        parent_middle_name: "",
+        parent_last_name: "",
+        parent_type: "FATHER",
+        parent_citizenship_no: "",
+        parent_nid_no: "",
+        parent_occupation: "",
+        parent_nationality: "",
+        parent_contact_no: "",
+      },
+      {
+        parent_first_name: "",
+        parent_middle_name: "",
+        parent_last_name: "",
+        parent_type: "MOTHER",
+        parent_citizenship_no: "",
+        parent_nid_no: "",
+        parent_occupation: "",
+        parent_nationality: "",
+        parent_contact_no: "",
+      },
+    ],
+    nominees: [
+      {
+        nominee_first_name: "",
+        nominee_middle_name: "",
+        nominee_last_name: "",
+        nominee_citizenship_no: "",
+        nominee_address: "",
+        nominee_contact_no: "",
+        nominee_witness_order: 0,
+        nominee_relationship: "",
+      },
+    ],
+    address: {
+      child_provience: "", // fixed typo: provience → province
+      child_district: "",
+      child_municipality: "",
+      child_ward_number: 0,
+      child_tole: "",
+    },
   });
 
   function handleChange(event) {
@@ -57,6 +78,30 @@ function BirthRegistration() {
   function handleSubmit(e) {
     e.preventDefault();
     console.log("FORM DATA", formData);
+
+    fetch(`${API_URL}/v1/birth-registration`, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
+    })
+      .then((response) => {
+        return response.json().then((data) => {
+          if (!response.ok) {
+            throw data;
+          }
+          return data;
+        });
+      })
+      .then((data) => {
+        console.log("Submission successful");
+        console.log(data);
+      })
+      .catch((err) => {
+        console.error("Submission failed:", err);
+      });
   }
 
   return (

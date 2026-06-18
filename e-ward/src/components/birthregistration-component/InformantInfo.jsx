@@ -1,6 +1,32 @@
-function InformantInfo({ setFormData, formData, handleChange }) {
+function InformantInfo({ setFormData, formData }) {
   const inputStyle =
     "w-full border border-gray-300 rounded-lg p-3 outline-none transition-colors focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:invalid:border-blue-500 focus:invalid:ring-blue-500";
+
+  // Safely grab the first nominee object, or fall back to an empty object
+  const nominee = formData.nominees?.[0] || {};
+
+  // Updates the first element inside the nominees array
+  const handleNomineeChange = (e) => {
+    e.preventDefault();
+    const { name, value } = e.target;
+
+    setFormData((prev) => {
+      // Ensure prev.nominees is an array to avoid crashes
+      const currentNominees = Array.isArray(prev.nominees)
+        ? prev.nominees
+        : [{}];
+
+      return {
+        ...prev,
+        nominees: [
+          {
+            ...currentNominees[0],
+            [name]: value,
+          },
+        ],
+      };
+    });
+  };
 
   return (
     <div className="bg-white p-6 rounded-xl shadow-md mt-6">
@@ -14,13 +40,8 @@ function InformantInfo({ setFormData, formData, handleChange }) {
           <input
             type="text"
             name="nominee_first_name"
-            value={formData.nominee_first_name}
-            onChange={(e) => {
-              setFormData((prev) => ({
-                ...prev,
-                [e.target.name]: e.target.value,
-              }));
-            }}
+            value={nominee.nominee_first_name || ""}
+            onChange={handleNomineeChange}
             placeholder="पहिलो नाम लेख्नुहोस् (Enter First Name)"
             required
             className={inputStyle}
@@ -34,13 +55,8 @@ function InformantInfo({ setFormData, formData, handleChange }) {
           <input
             type="text"
             name="nominee_middle_name"
-            value={formData.nominee_middle_name}
-            onChange={(e) => {
-              setFormData((prev) => ({
-                ...prev,
-                [e.target.name]: e.target.value,
-              }));
-            }}
+            value={nominee.nominee_middle_name || ""}
+            onChange={handleNomineeChange}
             placeholder="बीचको नाम (Middle Name)"
             className={inputStyle}
           />
@@ -51,13 +67,8 @@ function InformantInfo({ setFormData, formData, handleChange }) {
           <input
             type="text"
             name="nominee_last_name"
-            value={formData.nominee_last_name}
-            onChange={(e) => {
-              setFormData((prev) => ({
-                ...prev,
-                [e.target.name]: e.target.value,
-              }));
-            }}
+            value={nominee.nominee_last_name || ""}
+            onChange={handleNomineeChange}
             placeholder="थर लेख्नुहोस् (Enter Last Name)"
             required
             className={inputStyle}
@@ -68,13 +79,8 @@ function InformantInfo({ setFormData, formData, handleChange }) {
           <label>बच्चासँगको सम्बन्ध (Relationship to Child)</label>
           <select
             name="nominee_relationship"
-            value={formData.nominee_relationship}
-            onChange={(e) => {
-              setFormData((prev) => ({
-                ...prev,
-                [e.target.name]: e.target.value,
-              }));
-            }}
+            value={nominee.nominee_relationship || ""}
+            onChange={handleNomineeChange}
             required
             className={inputStyle}
           >
@@ -95,14 +101,26 @@ function InformantInfo({ setFormData, formData, handleChange }) {
           <input
             type="tel"
             name="nominee_contact_no"
-            value={formData.nominee_contact_no}
+            value={nominee.nominee_contact_no || ""}
             onChange={(e) => {
-              if (e.target.value === undefined || isNaN(Number(e.target.value)))
+              // Block non-numeric typing but allow backspaces safely
+              if (e.target.value !== "" && isNaN(Number(e.target.value)))
                 return;
-              setFormData((prev) => ({
-                ...prev,
-                [e.target.name]: Number(e.target.value).toString(),
-              }));
+
+              setFormData((prev) => {
+                const currentNominees = Array.isArray(prev.nominees)
+                  ? prev.nominees
+                  : [{}];
+                return {
+                  ...prev,
+                  nominees: [
+                    {
+                      ...currentNominees[0],
+                      nominee_contact_no: e.target.value,
+                    },
+                  ],
+                };
+              });
             }}
             required
             placeholder="98XXXXXXXX"
@@ -115,15 +133,8 @@ function InformantInfo({ setFormData, formData, handleChange }) {
           <input
             type="text"
             name="nominee_citizenship_no"
-            value={formData.nominee_citizenship_no}
-            onChange={(e) => {
-              if (e.target.value === undefined || isNaN(Number(e.target.value)))
-                return;
-              setFormData((prev) => ({
-                ...prev,
-                [e.target.name]: e.target.value,
-              }));
-            }}
+            value={nominee.nominee_citizenship_no || ""}
+            onChange={handleNomineeChange}
             required
             placeholder="नागरिकता नम्बर लेख्नुहोस् (Enter Citizenship Number)"
             className={inputStyle}
@@ -136,13 +147,8 @@ function InformantInfo({ setFormData, formData, handleChange }) {
         <input
           type="text"
           name="nominee_address"
-          value={formData.nominee_address}
-          onChange={(e) => {
-            setFormData((prev) => ({
-              ...prev,
-              [e.target.name]: e.target.value,
-            }));
-          }}
+          value={nominee.nominee_address || ""}
+          onChange={handleNomineeChange}
           required
           placeholder="ठेगाना लेख्नुहोस् (Enter Address)"
           className={inputStyle}

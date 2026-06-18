@@ -3,6 +3,18 @@ import logo from "../../assets/nepal-sarkar.png";
 function ChildInfo({ setFormData, formData, handleChange }) {
   const inputStyle =
     "w-full border border-gray-300 rounded-lg p-3 outline-none transition-colors focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:invalid:border-blue-500 focus:invalid:ring-blue-500";
+
+  const handleChildChange = (e) => {
+    e.preventDefault();
+    setFormData((prev) => ({
+      ...prev,
+      child: {
+        ...prev.child,
+        [e.target.name]: e.target.value,
+      },
+    }));
+  };
+
   return (
     <div>
       {/* Form Card */}
@@ -17,13 +29,8 @@ function ChildInfo({ setFormData, formData, handleChange }) {
             <input
               type="text"
               name="child_first_name"
-              value={formData.child_first_name}
-              onChange={(e) => {
-                setFormData((prev) => ({
-                  ...prev,
-                  [e.target.name]: e.target.value,
-                }));
-              }}
+              value={formData.child.child_first_name}
+              onChange={handleChildChange}
               placeholder="पहिलो नाम लेख्नुहोस् (Enter First Name)"
               required
               className={inputStyle}
@@ -37,13 +44,8 @@ function ChildInfo({ setFormData, formData, handleChange }) {
             <input
               type="text"
               name="child_middle_name"
-              value={formData.child_middle_name}
-              onChange={(e) => {
-                setFormData((prev) => ({
-                  ...prev,
-                  [e.target.name]: e.target.value,
-                }));
-              }}
+              value={formData.child.child_middle_name}
+              onChange={handleChildChange}
               placeholder="बीचको नाम (Middle Name)"
               className={inputStyle}
             />
@@ -54,13 +56,8 @@ function ChildInfo({ setFormData, formData, handleChange }) {
             <input
               type="text"
               name="child_last_name"
-              value={formData.child_last_name}
-              onChange={(e) => {
-                setFormData((prev) => ({
-                  ...prev,
-                  [e.target.name]: e.target.value,
-                }));
-              }}
+              value={formData.child.child_last_name}
+              onChange={handleChildChange}
               placeholder="थर लेख्नुहोस् (Enter Last Name)"
               required
               className={inputStyle}
@@ -71,13 +68,8 @@ function ChildInfo({ setFormData, formData, handleChange }) {
             <label>लिंग (Gender)</label>
             <select
               name="child_gender"
-              value={formData.child_gender}
-              onChange={(e) => {
-                setFormData((prev) => ({
-                  ...prev,
-                  [e.target.name]: e.target.value,
-                }));
-              }}
+              value={formData.child.child_gender}
+              onChange={handleChildChange}
               required
               className={inputStyle}
             >
@@ -93,13 +85,8 @@ function ChildInfo({ setFormData, formData, handleChange }) {
             <input
               type="date"
               name="child_dob_bs"
-              value={formData.child_dob_bs}
-              onChange={(e) => {
-                setFormData((prev) => ({
-                  ...prev,
-                  [e.target.name]: e.target.value,
-                }));
-              }}
+              value={formData.child.child_dob_bs}
+              onChange={handleChildChange}
               required
               className={inputStyle}
             />
@@ -109,13 +96,8 @@ function ChildInfo({ setFormData, formData, handleChange }) {
             <label>जन्मको किसिम (Birth Type)</label>
             <select
               name="child_birth_kind"
-              value={formData.child_birth_kind}
-              onChange={(e) => {
-                setFormData((prev) => ({
-                  ...prev,
-                  [e.target.name]: e.target.value,
-                }));
-              }}
+              value={formData.child.child_birth_kind}
+              onChange={handleChildChange}
               required
               className={inputStyle}
             >
@@ -133,16 +115,11 @@ function ChildInfo({ setFormData, formData, handleChange }) {
             <input
               type="time"
               name="child_time_of_birth"
-              value={formData.child_time_of_birth}
-              onChange={(e) => {
-                setFormData((prev) => ({
-                  ...prev,
-                  [e.target.name]: e.target.value,
-                }));
-              }}
+              value={formData.child.child_time_of_birth}
+              onChange={handleChildChange}
               required
               className={inputStyle}
-            ></input>
+            />
           </div>
 
           <div>
@@ -150,13 +127,13 @@ function ChildInfo({ setFormData, formData, handleChange }) {
             <input
               type="text"
               name="child_weight_kg"
-              value={formData.child_weight_kg}
+              value={formData.child.child_weight_kg}
               onChange={(e) => {
                 const value = Number(e.target.value);
                 if (e.target.value === "") {
                   setFormData((prev) => ({
                     ...prev,
-                    child_weight_kg: "",
+                    child: { ...prev.child, child_weight_kg: "" },
                   }));
                   return;
                 }
@@ -164,7 +141,7 @@ function ChildInfo({ setFormData, formData, handleChange }) {
                 if (value < 0 || value > 15) return;
                 setFormData((prev) => ({
                   ...prev,
-                  [e.target.name]: e.target.value,
+                  child: { ...prev.child, child_weight_kg: e.target.value },
                 }));
               }}
               placeholder="जस्तै: 3.2 (e.g. 3.2)"
@@ -178,13 +155,8 @@ function ChildInfo({ setFormData, formData, handleChange }) {
           <label>जन्म स्थान (Place of Birth)</label>
           <select
             name="child_birth_place"
-            value={formData.child_birth_place}
-            onChange={(e) => {
-              setFormData((prev) => ({
-                ...prev,
-                [e.target.name]: e.target.value,
-              }));
-            }}
+            value={formData.child.child_birth_place}
+            onChange={handleChildChange}
             required
             className={inputStyle}
           >
