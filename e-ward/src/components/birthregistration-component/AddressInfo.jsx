@@ -2,6 +2,18 @@ function AddressInfo({ setFormData, formData, handleChange }) {
   const inputStyle =
     "w-full border border-gray-300 rounded-lg p-3 outline-none transition-colors focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:invalid:border-blue-500 focus:invalid:ring-blue-500";
 
+  // Helper: update address nested object
+  const handleAddressChange = (e) => {
+    e.preventDefault();
+    setFormData((prev) => ({
+      ...prev,
+      address: {
+        ...prev.address,
+        [e.target.name]: e.target.value,
+      },
+    }));
+  };
+
   return (
     <div className="bg-white p-6 rounded-xl shadow-md mt-6">
       <h2 className="text-2xl font-semibold text-green-700 mb-6">
@@ -12,14 +24,9 @@ function AddressInfo({ setFormData, formData, handleChange }) {
         <div>
           <label>प्रदेश (Province)</label>
           <select
-            name="child_province"
-            value={formData.child_province}
-            onChange={(e) => {
-              setFormData((prev) => ({
-                ...prev,
-                [e.target.name]: e.target.value,
-              }));
-            }}
+            name="child_provience" // fixed typo
+            value={formData.address.child_provience} // reads from address
+            onChange={handleAddressChange}
             required
             className={inputStyle}
           >
@@ -39,13 +46,8 @@ function AddressInfo({ setFormData, formData, handleChange }) {
           <input
             type="text"
             name="child_district"
-            value={formData.child_district}
-            onChange={(e) => {
-              setFormData((prev) => ({
-                ...prev,
-                [e.target.name]: e.target.value,
-              }));
-            }}
+            value={formData.address.child_district}
+            onChange={handleAddressChange}
             required
             placeholder="जिल्ला लेख्नुहोस् (Enter District)"
             className={inputStyle}
@@ -59,13 +61,8 @@ function AddressInfo({ setFormData, formData, handleChange }) {
           <input
             type="text"
             name="child_municipality"
-            value={formData.child_municipality}
-            onChange={(e) => {
-              setFormData((prev) => ({
-                ...prev,
-                [e.target.name]: e.target.value,
-              }));
-            }}
+            value={formData.address.child_municipality}
+            onChange={handleAddressChange}
             required
             placeholder="नगरपालिका लेख्नुहोस् (Enter Municipality)"
             className={inputStyle}
@@ -77,13 +74,8 @@ function AddressInfo({ setFormData, formData, handleChange }) {
           <input
             type="number"
             name="child_ward_number"
-            value={formData.child_ward_number}
-            onChange={(e) => {
-              setFormData((prev) => ({
-                ...prev,
-                [e.target.name]: e.target.value,
-              }));
-            }}
+            value={formData.address.child_ward_number}
+            onChange={handleAddressChange}
             required
             placeholder="वडा नम्बर (Ward Number)"
             className={inputStyle}
@@ -96,13 +88,8 @@ function AddressInfo({ setFormData, formData, handleChange }) {
         <input
           type="text"
           name="child_tole"
-          value={formData.child_tole}
-          onChange={(e) => {
-            setFormData((prev) => ({
-              ...prev,
-              [e.target.name]: e.target.value,
-            }));
-          }}
+          value={formData.address.child_tole}
+          onChange={handleAddressChange}
           required
           placeholder="टोल वा सडकको नाम (Enter Tole or Street Name)"
           className={inputStyle}
