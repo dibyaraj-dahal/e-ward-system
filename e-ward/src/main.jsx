@@ -9,6 +9,7 @@ import Register from "./pages/Register.jsx";
 import Preview from "./components/Preview.jsx";
 import Dashboard from "./pages/admin/Dashboard.jsx";
 import Users from "./pages/admin/Users.jsx";
+import NoticeBoard from "./pages/NoticeBoard.jsx";
 
 
 const router = createBrowserRouter([
@@ -36,6 +37,10 @@ const router = createBrowserRouter([
   {
     path: "/admin/users",
     element: <Users />,
+  },
+  {
+    path: "/notice-board",
+    element: <NoticeBoard />,
   },
  
 
