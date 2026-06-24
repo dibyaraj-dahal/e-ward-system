@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ChildInfo from "../components/birthregistration-component/ChildInfo";
 import logo from "../assets/nepal-sarkar.png";
 import FatherInfo from "../components/birthregistration-component/FatherInfo";
@@ -9,7 +9,7 @@ import Preview from "../components/Preview";
 import { birthRegistrationSchema } from "../validation/birth-certificate-validation";
 import API_URL from "../api/api";
 
-function BirthRegistration() {
+function BirthRegistration({ wards }) {
   const [showPreview, setShowPreview] = useState(false);
   const [formData, setFormData] = useState({
     register_ward_id: "132a7e78-9d6b-4e0a-a81b-5ec99fe43f9c",
@@ -62,7 +62,7 @@ function BirthRegistration() {
       },
     ],
     address: {
-      child_provience: "", // fixed typo: provience → province
+      child_province: "", // fixed typo: provience → province
       child_district: "",
       child_municipality: "",
       child_ward_number: 0,
@@ -164,6 +164,7 @@ function BirthRegistration() {
               handleChange={handleChange}
             />
             <AddressInfo
+              wards={wards}
               setFormData={setFormData}
               formData={formData}
               handleChange={handleChange}

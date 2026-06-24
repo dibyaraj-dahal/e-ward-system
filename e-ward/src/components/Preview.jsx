@@ -1,7 +1,96 @@
 import React from "react";
 import logo from "../assets/nepal-sarkar.png";
 
-function Preview({ formData }) {
+function normalize(raw = {}) {
+  const child = raw.child || {};
+  const address = raw.address || {};
+  const parents = raw.parents || [];
+  const nominees = raw.nominees || [];
+
+  const father =
+    parents.find((p) => p.parent_type === "FATHER") || parents[0] || {};
+  const mother =
+    parents.find((p) => p.parent_type === "MOTHER") || parents[1] || {};
+  const nominee = nominees[0] || {};
+
+  const sharedProvince =
+    raw.child_province ??
+    address.child_province ??
+    address.child_provience ??
+    "";
+  const sharedDistrict = raw.child_district ?? address.child_district ?? "";
+  const sharedMunicipality =
+    raw.child_municipality ?? address.child_municipality ?? "";
+  const sharedWard = raw.child_ward_number ?? address.child_ward_number ?? "";
+  const sharedTole = raw.child_tole ?? address.child_tole ?? "";
+
+  return {
+    child_first_name: raw.child_first_name ?? child.child_first_name ?? "",
+    child_middle_name: raw.child_middle_name ?? child.child_middle_name ?? "",
+    child_last_name: raw.child_last_name ?? child.child_last_name ?? "",
+    child_gender: raw.child_gender ?? child.child_gender ?? "",
+    child_dob_bs: raw.child_dob_bs ?? child.child_dob_bs ?? "",
+    child_dob_ad: raw.child_dob_ad ?? child.child_dob_ad ?? "",
+    child_time_of_birth:
+      raw.child_time_of_birth ?? child.child_time_of_birth ?? "",
+    child_birth_place: raw.child_birth_place ?? child.child_birth_place ?? "",
+    child_birth_kind: raw.child_birth_kind ?? child.child_birth_kind ?? "",
+    child_weight_kg: raw.child_weight_kg ?? child.child_weight_kg ?? "",
+
+    child_province: sharedProvince,
+    child_district: sharedDistrict,
+    child_municipality: sharedMunicipality,
+    child_ward_number: sharedWard,
+    child_tole: sharedTole,
+
+    // shared address for parents/informant
+    shared_province: sharedProvince,
+    shared_district: sharedDistrict,
+    shared_municipality: sharedMunicipality,
+    shared_ward: sharedWard,
+    shared_tole: sharedTole,
+
+    father_first_name: raw.father_first_name ?? father.parent_first_name ?? "",
+    father_middle_name:
+      raw.father_middle_name ?? father.parent_middle_name ?? "",
+    father_last_name: raw.father_last_name ?? father.parent_last_name ?? "",
+    father_citizenship_no:
+      raw.father_citizenship_no ?? father.parent_citizenship_no ?? "",
+    father_occupation: raw.father_occupation ?? father.parent_occupation ?? "",
+    father_contact_no: raw.father_contact_no ?? father.parent_contact_no ?? "",
+
+    mother_first_name: raw.mother_first_name ?? mother.parent_first_name ?? "",
+    mother_middle_name:
+      raw.mother_middle_name ?? mother.parent_middle_name ?? "",
+    mother_last_name: raw.mother_last_name ?? mother.parent_last_name ?? "",
+    mother_citizenship_no:
+      raw.mother_citizenship_no ?? mother.parent_citizenship_no ?? "",
+    mother_occupation: raw.mother_occupation ?? mother.parent_occupation ?? "",
+    mother_contact_no: raw.mother_contact_no ?? mother.parent_contact_no ?? "",
+
+    nominee_first_name:
+      raw.nominee_first_name ?? nominee.nominee_first_name ?? "",
+    nominee_middle_name:
+      raw.nominee_middle_name ?? nominee.nominee_middle_name ?? "",
+    nominee_last_name: raw.nominee_last_name ?? nominee.nominee_last_name ?? "",
+    nominee_relationship:
+      raw.nominee_relationship ?? nominee.nominee_relationship ?? "",
+    nominee_contact_no:
+      raw.nominee_contact_no ?? nominee.nominee_contact_no ?? "",
+
+    // rejection
+    reject_text: raw.reject?.reject_text ?? raw.reject_text ?? "",
+  };
+}
+
+function Preview({
+  formData: rawFormData,
+  rejectText,
+  onRejectChange,
+  showRejectSection = false,
+}) {
+  const formData = normalize(rawFormData);
+
   const fullName = [
     formData.child_first_name,
     formData.child_middle_name,
@@ -31,10 +120,6 @@ function Preview({ formData }) {
     .filter(Boolean)
     .join(" ");
 
-  const dots =
-    "................................................................................................................";
-
-  // Checkbox square
   const Box = ({ checked }) => (
     <span
       style={{
@@ -50,26 +135,25 @@ function Preview({ formData }) {
     />
   );
 
-  // A row with label and dotted fill
   const DotRow = ({ num, label, value, style }) => (
     <div
       style={{
         display: "flex",
         alignItems: "baseline",
-        padding: "1px 6px",
-        fontSize: 11,
+        padding: "2px 6px",
+        fontSize: 12,
         ...style,
       }}
     >
-      {num && <span style={{ minWidth: 18 }}>{num}</span>}
+      {num && <span style={{ minWidth: 22 }}>{num}</span>}
       <span style={{ whiteSpace: "nowrap" }}>{label}&nbsp;:&nbsp;</span>
       <span
         style={{
           flex: 1,
           borderBottom: "1px dotted #000",
-          minHeight: 14,
+          minHeight: 15,
           paddingLeft: 2,
-          fontSize: 11,
+          fontSize: 12,
         }}
       >
         {value || ""}
@@ -77,52 +161,95 @@ function Preview({ formData }) {
     </div>
   );
 
+  // Shared address row for parents/informant
+  const AddressRow = ({ num }) => (
+    <div style={{ ...s.inlineGroup, fontSize: 12 }}>
+      <span style={{ minWidth: 22 }}>{num}</span>
+      <span>स्थायी ठेगाना&nbsp;: प्रदेश&nbsp;</span>
+      <span
+        style={{
+          borderBottom: "1px dotted #000",
+          display: "inline-block",
+          minWidth: 70,
+        }}
+      >
+        {formData.shared_province}
+      </span>
+      <span>&nbsp;जिल्ला&nbsp;</span>
+      <span
+        style={{
+          borderBottom: "1px dotted #000",
+          display: "inline-block",
+          minWidth: 80,
+        }}
+      >
+        {formData.shared_district}
+      </span>
+      <span>&nbsp;स्थानीय तह&nbsp;</span>
+      <span
+        style={{
+          borderBottom: "1px dotted #000",
+          display: "inline-block",
+          minWidth: 80,
+        }}
+      >
+        {formData.shared_municipality}
+      </span>
+      <span>&nbsp;वडा नं.&nbsp;</span>
+      <span
+        style={{
+          borderBottom: "1px dotted #000",
+          display: "inline-block",
+          minWidth: 50,
+        }}
+      >
+        {formData.shared_ward}
+      </span>
+      <span>&nbsp;टोल/बस्ती&nbsp;</span>
+      <span
+        style={{
+          borderBottom: "1px dotted #000",
+          display: "inline-block",
+          minWidth: 60,
+        }}
+      >
+        {formData.shared_tole}
+      </span>
+    </div>
+  );
+
   const s = {
     page: {
       fontFamily: "'Noto Sans Devanagari', 'Noto Sans', Arial, sans-serif",
-      fontSize: 11,
+      fontSize: 12,
       color: "#000",
       background: "#fff",
       padding: "10mm 12mm",
       width: "210mm",
       boxSizing: "border-box",
     },
-    box: { border: "1px solid #000", marginTop: 5 },
+    box: { border: "1px solid #000", marginTop: 6 },
     secHead: {
       fontWeight: "bold",
-      fontSize: 11.5,
-      padding: "2px 6px",
+      fontSize: 13,
+      padding: "3px 6px",
       borderBottom: "1px solid #000",
-    },
-    row: {
-      display: "flex",
-      alignItems: "baseline",
-      padding: "1px 6px",
-      fontSize: 11,
-      flexWrap: "wrap",
     },
     cbRow: {
       display: "flex",
       alignItems: "center",
-      padding: "2px 6px",
-      fontSize: 11,
+      padding: "3px 6px",
+      fontSize: 12,
       flexWrap: "wrap",
       gap: 10,
-    },
-    label: { whiteSpace: "nowrap", marginRight: 4 },
-    dotLine: {
-      borderBottom: "1px dotted #000",
-      flex: 1,
-      minHeight: 14,
-      display: "inline-block",
     },
     inlineGroup: {
       display: "flex",
       alignItems: "baseline",
       gap: 6,
       flexWrap: "wrap",
-      padding: "1px 6px",
-      fontSize: 11,
+      padding: "2px 6px",
+      fontSize: 12,
     },
   };
 
@@ -138,14 +265,13 @@ function Preview({ formData }) {
         }}
       >
         <img src={logo} alt="Nepal Sarkar" style={{ width: 65, height: 65 }} />
-
         <div style={{ textAlign: "center", flex: 1, padding: "0 10px" }}>
-          <div style={{ fontWeight: "bold", fontSize: 17 }}>नेपाल सरकार</div>
-          <div style={{ fontWeight: 600, fontSize: 13 }}>स्थानीय तह</div>
-          <div style={{ fontWeight: 600, fontSize: 13 }}>
+          <div style={{ fontWeight: "bold", fontSize: 18 }}>नेपाल सरकार</div>
+          <div style={{ fontWeight: 600, fontSize: 14 }}>स्थानीय तह</div>
+          <div style={{ fontWeight: 600, fontSize: 14 }}>
             स्थानीय पञ्जिकाधिकारीको कार्यालय
           </div>
-          <div style={{ fontSize: 11, marginTop: 4 }}>
+          <div style={{ fontSize: 12, marginTop: 4 }}>
             वडा नं.&nbsp;
             <span
               style={{
@@ -158,7 +284,7 @@ function Preview({ formData }) {
             </span>
             &nbsp;नगरपालिका / गाउँपालिका
           </div>
-          <div style={{ fontSize: 11, marginTop: 2 }}>
+          <div style={{ fontSize: 12, marginTop: 2 }}>
             <span
               style={{
                 borderBottom: "1px dotted #000",
@@ -181,13 +307,12 @@ function Preview({ formData }) {
             &nbsp;प्रदेश
           </div>
         </div>
-
         <div
           style={{
             border: "1px solid #000",
             padding: "5px 10px",
             minWidth: 130,
-            fontSize: 10.5,
+            fontSize: 11,
           }}
         >
           <div style={{ marginBottom: 6 }}>
@@ -226,27 +351,22 @@ function Preview({ formData }) {
         <div style={{ fontWeight: "bold", fontSize: 22, letterSpacing: 2 }}>
           जन्म सूचना फाराम
         </div>
-        <div style={{ fontSize: 10.5, marginTop: 1 }}>
+        <div style={{ fontSize: 11, marginTop: 1 }}>
           (स्थानीय पञ्जिकाधिकारी नियमावली, २०७७ को नियम ३ बमोजिम)
         </div>
-        <div style={{ fontSize: 10.5 }}>
+        <div style={{ fontSize: 11 }}>
           (यो फाराम भरको ३५ दिन भित्र सम्बन्धित वडा कार्यालयमा पेश गर्नुपर्नेछ
           ।)
         </div>
       </div>
 
-      {/* ══════════════════════════════════════════
-          क. बच्चाको विवरण
-      ══════════════════════════════════════════ */}
+      {/* ── क. बच्चाको विवरण ── */}
       <div style={s.box}>
         <div style={s.secHead}>क. बच्चाको विवरण</div>
-
-        {/* 1. Full name */}
         <DotRow num="१." label="पूरा नाम" value={fullName} />
 
-        {/* 2. Gender */}
         <div style={s.cbRow}>
-          <span style={{ minWidth: 18 }}>२.</span>
+          <span style={{ minWidth: 22 }}>२.</span>
           <span>लिङ्ग&nbsp;:</span>
           <span>
             <Box checked={formData.child_gender === "MALE"} />
@@ -262,9 +382,8 @@ function Preview({ formData }) {
           </span>
         </div>
 
-        {/* 3. DOB */}
         <div style={s.inlineGroup}>
-          <span style={{ minWidth: 18 }}>३.</span>
+          <span style={{ minWidth: 22 }}>३.</span>
           <span>जन्म मिति (वि.सं.)&nbsp;:&nbsp;</span>
           <span
             style={{
@@ -288,9 +407,8 @@ function Preview({ formData }) {
           <span>)</span>
         </div>
 
-        {/* 4. Time */}
         <div style={s.inlineGroup}>
-          <span style={{ minWidth: 18 }}>४.</span>
+          <span style={{ minWidth: 22 }}>४.</span>
           <span>जन्म समय&nbsp;:&nbsp;</span>
           <span
             style={{
@@ -304,12 +422,11 @@ function Preview({ formData }) {
           <span>&nbsp;बजे</span>
         </div>
 
-        {/* 5. Birth place */}
-        <div style={{ padding: "1px 6px", fontSize: 11 }}>
-          <span style={{ minWidth: 18, display: "inline-block" }}>५.</span>
+        <div style={{ padding: "2px 6px", fontSize: 12 }}>
+          <span style={{ minWidth: 22, display: "inline-block" }}>५.</span>
           <span>जन्म स्थान&nbsp;:</span>
         </div>
-        <div style={{ ...s.inlineGroup, paddingLeft: 24, gap: 8 }}>
+        <div style={{ ...s.inlineGroup, paddingLeft: 28, gap: 8 }}>
           <span>(क) प्रदेश&nbsp;:&nbsp;</span>
           <span
             style={{
@@ -341,7 +458,7 @@ function Preview({ formData }) {
             {formData.child_municipality || ""}
           </span>
         </div>
-        <div style={{ ...s.inlineGroup, paddingLeft: 24 }}>
+        <div style={{ ...s.inlineGroup, paddingLeft: 28 }}>
           <span>(घ) वडा नं.&nbsp;:&nbsp;</span>
           <span
             style={{
@@ -364,9 +481,8 @@ function Preview({ formData }) {
           </span>
         </div>
 
-        {/* 6. Birth location type */}
         <div style={s.cbRow}>
-          <span style={{ minWidth: 18 }}>६.</span>
+          <span style={{ minWidth: 22 }}>६.</span>
           <span>जन्म भएको स्थान&nbsp;:</span>
           <span>
             <Box checked={formData.child_birth_place === "HOME"} />
@@ -390,7 +506,6 @@ function Preview({ formData }) {
           </span>
         </div>
 
-        {/* 7. Birth order */}
         <div style={{ ...s.cbRow, alignItems: "flex-start" }}>
           <div style={{ display: "flex", flexDirection: "column" }}>
             <div
@@ -401,7 +516,7 @@ function Preview({ formData }) {
                 flexWrap: "wrap",
               }}
             >
-              <span style={{ minWidth: 18 }}>७.</span>
+              <span style={{ minWidth: 22 }}>७.</span>
               <span>बच्चा कतिलौं जन्म हो&nbsp;:</span>
               <span>
                 <Box />
@@ -420,15 +535,14 @@ function Preview({ formData }) {
                 चौथो वा सोभन्दा माथि
               </span>
             </div>
-            <div style={{ paddingLeft: 22, fontSize: 10.5 }}>
+            <div style={{ paddingLeft: 26, fontSize: 11 }}>
               (जीवित जन्मको आधारमा)
             </div>
           </div>
         </div>
 
-        {/* 8. Birth kind */}
         <div style={s.cbRow}>
-          <span style={{ minWidth: 18 }}>८.</span>
+          <span style={{ minWidth: 22 }}>८.</span>
           <span>जन्म प्रकार&nbsp;:</span>
           <span style={{ minWidth: 30 }} />
           <span>
@@ -447,9 +561,8 @@ function Preview({ formData }) {
           </span>
         </div>
 
-        {/* 9. Delivery type */}
         <div style={s.cbRow}>
-          <span style={{ minWidth: 18 }}>९.</span>
+          <span style={{ minWidth: 22 }}>९.</span>
           <span>जन्मको प्रकार&nbsp;:</span>
           <span style={{ minWidth: 18 }} />
           <span>
@@ -476,9 +589,8 @@ function Preview({ formData }) {
           </span>
         </div>
 
-        {/* 10. Weight */}
         <div style={s.inlineGroup}>
-          <span style={{ minWidth: 18 }}>१०.</span>
+          <span style={{ minWidth: 22 }}>१०.</span>
           <span>जन्मको तौल&nbsp;:&nbsp;</span>
           <span
             style={{
@@ -487,12 +599,11 @@ function Preview({ formData }) {
               minWidth: 130,
             }}
           >
-            {formData.child_weight_kg ? `${formData.child_weight_kg}` : ""}
+            {formData.child_weight_kg || ""}
           </span>
           <span>&nbsp;के.जी.</span>
         </div>
 
-        {/* 11. Birth attendant */}
         <DotRow
           num="११."
           label="जन्म भएको क्रममा सहयोग गर्नेको नाम र प्रकार"
@@ -500,14 +611,12 @@ function Preview({ formData }) {
         />
       </div>
 
-      {/* ══════════════════════════════════════════
-          ख. बुबाको विवरण
-      ══════════════════════════════════════════ */}
+      {/* ── ख. बुबाको विवरण ── */}
       <div style={s.box}>
         <div style={s.secHead}>ख. बुबाको विवरण</div>
         <DotRow num="१." label="पूरा नाम" value={fatherFullName} />
         <div style={s.inlineGroup}>
-          <span style={{ minWidth: 18 }}>२.</span>
+          <span style={{ minWidth: 22 }}>२.</span>
           <span>नागरिकता नं.&nbsp;:&nbsp;</span>
           <span
             style={{
@@ -519,51 +628,9 @@ function Preview({ formData }) {
             {formData.father_citizenship_no || ""}
           </span>
         </div>
+        <AddressRow num="३." />
         <div style={s.inlineGroup}>
-          <span style={{ minWidth: 18 }}>३.</span>
-          <span>स्थायी ठेगाना&nbsp;: प्रदेश&nbsp;</span>
-          <span
-            style={{
-              borderBottom: "1px dotted #000",
-              display: "inline-block",
-              minWidth: 70,
-            }}
-          />
-          <span>&nbsp;जिल्ला&nbsp;</span>
-          <span
-            style={{
-              borderBottom: "1px dotted #000",
-              display: "inline-block",
-              minWidth: 80,
-            }}
-          />
-          <span>&nbsp;स्थानीय तह&nbsp;</span>
-          <span
-            style={{
-              borderBottom: "1px dotted #000",
-              display: "inline-block",
-              minWidth: 80,
-            }}
-          />
-          <span>&nbsp;वडा नं.&nbsp;</span>
-          <span
-            style={{
-              borderBottom: "1px dotted #000",
-              display: "inline-block",
-              minWidth: 50,
-            }}
-          />
-          <span>&nbsp;टोल/बस्ती&nbsp;</span>
-          <span
-            style={{
-              borderBottom: "1px dotted #000",
-              display: "inline-block",
-              minWidth: 60,
-            }}
-          />
-        </div>
-        <div style={s.inlineGroup}>
-          <span style={{ minWidth: 18 }}>४.</span>
+          <span style={{ minWidth: 22 }}>४.</span>
           <span>पेशा&nbsp;:&nbsp;</span>
           <span
             style={{
@@ -588,14 +655,12 @@ function Preview({ formData }) {
         </div>
       </div>
 
-      {/* ══════════════════════════════════════════
-          ग. आमाको विवरण
-      ══════════════════════════════════════════ */}
+      {/* ── ग. आमाको विवरण ── */}
       <div style={s.box}>
         <div style={s.secHead}>ग. आमाको विवरण</div>
         <DotRow num="१." label="पूरा नाम" value={motherFullName} />
         <div style={s.inlineGroup}>
-          <span style={{ minWidth: 18 }}>२.</span>
+          <span style={{ minWidth: 22 }}>२.</span>
           <span>नागरिकता नं.&nbsp;:&nbsp;</span>
           <span
             style={{
@@ -607,51 +672,9 @@ function Preview({ formData }) {
             {formData.mother_citizenship_no || ""}
           </span>
         </div>
+        <AddressRow num="३." />
         <div style={s.inlineGroup}>
-          <span style={{ minWidth: 18 }}>३.</span>
-          <span>स्थायी ठेगाना&nbsp;: प्रदेश&nbsp;</span>
-          <span
-            style={{
-              borderBottom: "1px dotted #000",
-              display: "inline-block",
-              minWidth: 70,
-            }}
-          />
-          <span>&nbsp;जिल्ला&nbsp;</span>
-          <span
-            style={{
-              borderBottom: "1px dotted #000",
-              display: "inline-block",
-              minWidth: 80,
-            }}
-          />
-          <span>&nbsp;स्थानीय तह&nbsp;</span>
-          <span
-            style={{
-              borderBottom: "1px dotted #000",
-              display: "inline-block",
-              minWidth: 80,
-            }}
-          />
-          <span>&nbsp;वडा नं.&nbsp;</span>
-          <span
-            style={{
-              borderBottom: "1px dotted #000",
-              display: "inline-block",
-              minWidth: 50,
-            }}
-          />
-          <span>&nbsp;टोल/बस्ती&nbsp;</span>
-          <span
-            style={{
-              borderBottom: "1px dotted #000",
-              display: "inline-block",
-              minWidth: 60,
-            }}
-          />
-        </div>
-        <div style={s.inlineGroup}>
-          <span style={{ minWidth: 18 }}>४.</span>
+          <span style={{ minWidth: 22 }}>४.</span>
           <span>पेशा&nbsp;:&nbsp;</span>
           <span
             style={{
@@ -676,14 +699,12 @@ function Preview({ formData }) {
         </div>
       </div>
 
-      {/* ══════════════════════════════════════════
-          घ. सूचनादिने व्यक्तिको विवरण
-      ══════════════════════════════════════════ */}
+      {/* ── घ. सूचनादिने व्यक्तिको विवरण ── */}
       <div style={s.box}>
         <div style={s.secHead}>घ. सूचनादिने व्यक्तिको विवरण</div>
         <DotRow num="१." label="पूरा नाम" value={informantFullName} />
         <div style={s.cbRow}>
-          <span style={{ minWidth: 18 }}>२.</span>
+          <span style={{ minWidth: 22 }}>२.</span>
           <span>सम्बन्ध&nbsp;:</span>
           <span>
             <Box checked={formData.nominee_relationship === "FATHER"} />
@@ -714,51 +735,9 @@ function Preview({ formData }) {
             )
           </span>
         </div>
+        <AddressRow num="३." />
         <div style={s.inlineGroup}>
-          <span style={{ minWidth: 18 }}>३.</span>
-          <span>स्थायी ठेगाना&nbsp;: प्रदेश&nbsp;</span>
-          <span
-            style={{
-              borderBottom: "1px dotted #000",
-              display: "inline-block",
-              minWidth: 70,
-            }}
-          />
-          <span>&nbsp;जिल्ला&nbsp;</span>
-          <span
-            style={{
-              borderBottom: "1px dotted #000",
-              display: "inline-block",
-              minWidth: 80,
-            }}
-          />
-          <span>&nbsp;स्थानीय तह&nbsp;</span>
-          <span
-            style={{
-              borderBottom: "1px dotted #000",
-              display: "inline-block",
-              minWidth: 80,
-            }}
-          />
-          <span>&nbsp;वडा नं.&nbsp;</span>
-          <span
-            style={{
-              borderBottom: "1px dotted #000",
-              display: "inline-block",
-              minWidth: 50,
-            }}
-          />
-          <span>&nbsp;टोल/बस्ती&nbsp;</span>
-          <span
-            style={{
-              borderBottom: "1px dotted #000",
-              display: "inline-block",
-              minWidth: 60,
-            }}
-          />
-        </div>
-        <div style={s.inlineGroup}>
-          <span style={{ minWidth: 18 }}>४.</span>
+          <span style={{ minWidth: 22 }}>४.</span>
           <span>सम्पर्क नं.&nbsp;:&nbsp;</span>
           <span
             style={{
@@ -771,7 +750,7 @@ function Preview({ formData }) {
           </span>
         </div>
         <div style={s.inlineGroup}>
-          <span style={{ minWidth: 18 }}>५.</span>
+          <span style={{ minWidth: 22 }}>५.</span>
           <span>सूचना दिएको मिति&nbsp;: (वि.सं.)&nbsp;</span>
           <span
             style={{
@@ -792,9 +771,7 @@ function Preview({ formData }) {
         </div>
       </div>
 
-      {/* ══════════════════════════════════════════
-          घोषणा / Declaration
-      ══════════════════════════════════════════ */}
+      {/* ── घोषणा ── */}
       <div style={{ ...s.box, display: "flex" }}>
         <div
           style={{ flex: 1, padding: "4px 8px", borderRight: "1px solid #000" }}
@@ -803,18 +780,18 @@ function Preview({ formData }) {
             style={{
               fontWeight: "bold",
               textAlign: "center",
-              fontSize: 12,
+              fontSize: 13,
               marginBottom: 4,
             }}
           >
             घोषणा
           </div>
-          <div style={{ fontSize: 10.5, lineHeight: 1.6 }}>
+          <div style={{ fontSize: 11, lineHeight: 1.6 }}>
             माथि उल्लेखित विवरणहरु सत्य छन् । यस जन्मको सूचना मैले सही जानकारीका
             आधारमा दिएको छु ।
           </div>
         </div>
-        <div style={{ padding: "4px 10px", fontSize: 11, minWidth: 190 }}>
+        <div style={{ padding: "4px 10px", fontSize: 12, minWidth: 190 }}>
           <div style={{ marginBottom: 8 }}>
             दस्तखत&nbsp;:&nbsp;
             <span
@@ -848,15 +825,13 @@ function Preview({ formData }) {
         </div>
       </div>
 
-      {/* ══════════════════════════════════════════
-          कार्यालय प्रयोगका लागि
-      ══════════════════════════════════════════ */}
+      {/* ── कार्यालय प्रयोगका लागि ── */}
       <div style={{ ...s.box, marginTop: 8 }}>
         <div
           style={{
             textAlign: "center",
             fontWeight: "bold",
-            fontSize: 12,
+            fontSize: 13,
             padding: "2px 0",
             borderBottom: "1px solid #000",
             background: "#f5f5f5",
@@ -870,7 +845,7 @@ function Preview({ formData }) {
               flex: 1,
               padding: "4px 8px",
               borderRight: "1px solid #000",
-              fontSize: 11,
+              fontSize: 12,
             }}
           >
             <div style={s.inlineGroup}>
@@ -920,7 +895,7 @@ function Preview({ formData }) {
               flexDirection: "column",
               alignItems: "center",
               justifyContent: "center",
-              fontSize: 11,
+              fontSize: 12,
               padding: 6,
               textAlign: "center",
             }}
@@ -935,15 +910,15 @@ function Preview({ formData }) {
                 }}
               />
             </div>
-            <div style={{ marginTop: 16, fontSize: 10.5, color: "#333" }}>
+            <div style={{ marginTop: 16, fontSize: 11, color: "#333" }}>
               कार्यालयको छाप
             </div>
           </div>
         </div>
       </div>
 
-      {/* Note */}
-      <div style={{ fontSize: 10, marginTop: 6 }}>
+      {/* ── Note ── */}
+      <div style={{ fontSize: 11, marginTop: 6 }}>
         <strong>नोट&nbsp;:</strong> यो फाराम भरियेको मितिले ३५ दिन भित्र
         सम्बन्धित वडा कार्यालयमा पेश गर्नुपर्नेछ ।
       </div>

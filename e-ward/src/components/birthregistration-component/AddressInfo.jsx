@@ -1,17 +1,105 @@
-function AddressInfo({ setFormData, formData, handleChange }) {
-  const inputStyle =
-    "w-full border border-gray-300 rounded-lg p-3 outline-none transition-colors focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:invalid:border-blue-500 focus:invalid:ring-blue-500";
+import React, { useEffect, useMemo, useState } from "react";
+import API_URL from "../../api/api";
 
+function AddressInfo({ wards, setFormData, formData }) {
+  const inputStyle =
+    "w-full border border-gray-300 rounded-lg p-3 outline-none transition-colors focus:border-blue-500 focus:ring-1 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed";
+  // console.log("ward", wards);
   // Helper: update address nested object
   const handleAddressChange = (e) => {
-    e.preventDefault();
+    const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
       address: {
         ...prev.address,
-        [e.target.name]: e.target.value,
+        [name]: value,
       },
     }));
+  };
+
+  const provinces = useMemo(() => {
+    return [...new Set(wards.map((w) => w.ward_province))].sort();
+  }, [wards]);
+
+  const districts = useMemo(() => {
+    if (!formData.address.child_province) return [];
+    return [
+      ...new Set(
+        wards
+          .filter((w) => w.ward_province === formData.address.child_province)
+          .map((w) => w.ward_district),
+      ),
+    ].sort();
+  }, [wards, formData.address.child_province]);
+
+  const municipalities = useMemo(() => {
+    if (!formData.address.child_province || !formData.address.child_district)
+      return [];
+    return [
+      ...new Set(
+        wards
+          .filter(
+            (w) =>
+              w.ward_province === formData.address.child_province &&
+              w.ward_district === formData.address.child_district,
+          )
+          .map((w) => w.ward_municipality),
+      ),
+    ].sort();
+  }, [wards, formData.address.child_province, formData.address.child_district]);
+
+  const filteredWards = useMemo(() => {
+    if (
+      !formData.address.child_province ||
+      !formData.address.child_district ||
+      !formData.address.child_municipality
+    )
+      return [];
+
+    return wards
+      .filter(
+        (w) =>
+          w.ward_province?.toLowerCase() ===
+            formData.address.child_province?.toLowerCase() &&
+          w.ward_district?.toLowerCase() ===
+            formData.address.child_district?.toLowerCase() &&
+          w.ward_municipality?.toLowerCase() ===
+            formData.address.child_municipality?.toLowerCase(),
+      )
+      .sort((a, b) => Number(a.ward_no) - Number(b.ward_no));
+  }, [
+    wards,
+    formData.address.child_province,
+    formData.address.child_district,
+    formData.address.child_municipality,
+  ]);
+  // each level reset clears everything below it inside formData.address
+  const handleProvinceChange = (e) => {
+    const value = e.target.value;
+
+    handleAddressChange({ target: { name: "child_province", value } });
+    handleAddressChange({ target: { name: "child_district", value: "" } });
+    handleAddressChange({ target: { name: "child_municipality", value: "" } });
+    handleAddressChange({ target: { name: "child_ward_number", value: "" } });
+  };
+
+  const handleDistrictChange = (e) => {
+    const value = e.target.value;
+    handleAddressChange({ target: { name: "child_district", value } });
+    handleAddressChange({ target: { name: "child_municipality", value: "" } });
+    handleAddressChange({ target: { name: "child_ward_number", value: "" } });
+  };
+
+  const handleMunicipalityChange = (e) => {
+    const value = e.target.value;
+    handleAddressChange({ target: { name: "child_municipality", value } });
+    handleAddressChange({ target: { name: "child_ward_number", value: "" } });
+  };
+
+  const handleWardChange = (e) => {
+    handleAddressChange({
+      target: { name: "child_ward_number", value: e.target.value },
+    });
   };
 
   return (
@@ -24,62 +112,80 @@ function AddressInfo({ setFormData, formData, handleChange }) {
         <div>
           <label>प्रदेश (Province)</label>
           <select
-            name="child_provience" // fixed typo
-            value={formData.address.child_provience} // reads from address
-            onChange={handleAddressChange}
+            name="child_province"
+            value={formData.address.child_province}
+            onChange={handleProvinceChange}
             required
-            className={inputStyle}
+            className={`${inputStyle} bg-white`}
           >
             <option value="">-- प्रदेश छान्नुहोस् (Select Province) --</option>
-            <option value="Koshi">कोशी (Koshi)</option>
-            <option value="Madhesh">मधेश (Madhesh)</option>
-            <option value="Bagmati">बागमती (Bagmati)</option>
-            <option value="Gandaki">गण्डकी (Gandaki)</option>
-            <option value="Lumbini">लुम्बिनी (Lumbini)</option>
-            <option value="Karnali">कर्णाली (Karnali)</option>
-            <option value="Sudurpashchim">सुदूरपश्चिम (Sudurpashchim)</option>
+            {provinces.map((p) => (
+              <option key={p} value={p}>
+                {p}
+              </option>
+            ))}
           </select>
         </div>
 
         <div>
           <label>जिल्ला (District)</label>
-          <input
-            type="text"
+          <select
             name="child_district"
             value={formData.address.child_district}
-            onChange={handleAddressChange}
+            onChange={handleDistrictChange}
+            disabled={!formData.address.child_province}
             required
-            placeholder="जिल्ला लेख्नुहोस् (Enter District)"
-            className={inputStyle}
-          />
+            className={`${inputStyle} bg-white`}
+          >
+            <option value="">-- जिल्ला छान्नुहोस् (Select District) --</option>
+            {districts.map((d) => (
+              <option key={d} value={d}>
+                {d}
+              </option>
+            ))}
+          </select>
         </div>
 
         <div>
           <label>
             नगरपालिका / गाउँपालिका (Municipality / Rural Municipality)
           </label>
-          <input
-            type="text"
+          <select
             name="child_municipality"
             value={formData.address.child_municipality}
-            onChange={handleAddressChange}
+            onChange={handleMunicipalityChange}
+            disabled={!formData.address.child_district}
             required
-            placeholder="नगरपालिका लेख्नुहोस् (Enter Municipality)"
-            className={inputStyle}
-          />
+            className={`${inputStyle} bg-white`}
+          >
+            <option value="">
+              -- नगरपालिका छान्नुहोस् (Select Municipality) --
+            </option>
+            {municipalities.map((m) => (
+              <option key={m} value={m}>
+                {m}
+              </option>
+            ))}
+          </select>
         </div>
 
         <div>
           <label>वडा नं. (Ward No.)</label>
-          <input
-            type="number"
+          <select
             name="child_ward_number"
             value={formData.address.child_ward_number}
-            onChange={handleAddressChange}
+            onChange={handleWardChange}
+            disabled={!formData.address.child_municipality}
             required
-            placeholder="वडा नम्बर (Ward Number)"
-            className={inputStyle}
-          />
+            className={`${inputStyle} bg-white`}
+          >
+            <option value="">-- वडा छान्नुहोस् (Select Ward) --</option>
+            {filteredWards.map((w) => (
+              <option key={w.ward_id} value={w.ward_no}>
+                Ward {w.ward_no} — {w.ward_name}
+              </option>
+            ))}
+          </select>
         </div>
       </div>
 

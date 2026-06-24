@@ -1,7 +1,12 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import API_URL from "../api/api";
+import { LoginContext } from "../components/context/LoginContext";
+import { useNavigate } from "react-router-dom";
 
 function Login() {
+  const { isLogin, setisLogin, userRole, setRole } = useContext(LoginContext);
+  const nagavitor = useNavigate();
+
   const [loginData, setLoginData] = useState({
     otp_phone_number: "",
     otp_code: "",
@@ -37,7 +42,9 @@ function Login() {
         .then((data) => {
           console.log("Login successful");
           console.log(data);
+          setRole(data.data.user_details.user_role);
           setIsNumber(true);
+          nagavitor("/Citizen");
         })
         .catch((err) => {
           console.log(err);
@@ -76,32 +83,43 @@ function Login() {
   };
 
   return (
-    
-    
-  <div className="flex flex-col items-center gap-3">
-  <img
-    src="/logo.png"
-    alt="Logo"
-    className="w-20 h-20 object-contain"
-  />
+    <div className="flex flex-col items-center gap-3">
+      <img src="/logo.png" alt="Logo" className="w-20 h-20 object-contain" />
 
-  <h1 className="text-3xl font-bold text-blue-700">
-    E-Ward System
-  </h1>
+      <h1 className="text-3xl font-bold text-blue-700">E-Ward System</h1>
 
-  <p className="text-gray-500 text-sm">
-    Login with your phone number
-  </p>
+      <p className="text-gray-500 text-sm">Login with your phone number</p>
 
+      <div className="w-full  ">
+        <label htmlFor="" className="text-md font-bold ">
+          Phone Number:
+        </label>
+        <input
+          type="text"
+          name="otp_phone_number"
+          value={loginData.otp_phone_number}
+          readOnly={isNumber}
+          onChange={(e) => {
+            if (e.target.value === undefined || isNaN(Number(e.target.value)))
+              return;
+            setLoginData((prev) => ({
+              ...prev,
+              [e.target.name]: Number(e.target.value),
+            }));
+          }}
+          placeholder="98XXXXXXXX"
+          className="border border-gray-400 p-2 rounded-lg w-full mt-1"
+        />
+      </div>
+      {isNumber && (
         <div className="w-full  ">
           <label htmlFor="" className="text-md font-bold ">
-            Phone Number:
+            OTP Code:
           </label>
           <input
             type="text"
-            name="otp_phone_number"
-            value={loginData.otp_phone_number}
-            readOnly={isNumber}
+            name="otp_code"
+            value={loginData.otp_code}
             onChange={(e) => {
               if (e.target.value === undefined || isNaN(Number(e.target.value)))
                 return;
@@ -110,47 +128,21 @@ function Login() {
                 [e.target.name]: Number(e.target.value),
               }));
             }}
-            placeholder="98XXXXXXXX"
+            placeholder="XXXXXX"
             className="border border-gray-400 p-2 rounded-lg w-full mt-1"
           />
         </div>
-        {isNumber && (
-          <div className="w-full  ">
-            <label htmlFor="" className="text-md font-bold ">
-              OTP Code:
-            </label>
-            <input
-              type="text"
-              name="otp_code"
-              value={loginData.otp_code}
-              onChange={(e) => {
-                if (
-                  e.target.value === undefined ||
-                  isNaN(Number(e.target.value))
-                )
-                  return;
-                setLoginData((prev) => ({
-                  ...prev,
-                  [e.target.name]: Number(e.target.value),
-                }));
-              }}
-              placeholder="XXXXXX"
-              className="border border-gray-400 p-2 rounded-lg w-full mt-1"
-            />
-          </div>
-        )}
+      )}
 
-        <div className="w-full  mt-2 mb-2">
-          <button
-            onClick={handleButtonClick}
-            className="bg-blue-500 text-lg text-white p-2 rounded-lg w-full hover:bg-blue-400 hover:shadow-2xl hover:shadow-gray-600 active:bg-blue-600 cursor-pointer"
-          >
-            {isNumber === true ? "Login" : "Sent OTP"}
-          </button>
-        </div>
+      <div className="w-full  mt-2 mb-2">
+        <button
+          onClick={handleButtonClick}
+          className="bg-blue-500 text-lg text-white p-2 rounded-lg w-full hover:bg-blue-400 hover:shadow-2xl hover:shadow-gray-600 active:bg-blue-600 cursor-pointer"
+        >
+          {isNumber === true ? "Login" : "Sent OTP"}
+        </button>
       </div>
-    
-    
+    </div>
   );
 }
 
